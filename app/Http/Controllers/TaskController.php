@@ -4,18 +4,28 @@
  use App\Http\Requests;
 
  use Illuminate\Http\Request;
- use App\Http\Controllers\Controller;
+ use App\Repositories\TaskRepository;
+use App\Task;
+
 
  class TaskController extends Controller
 {
     //
+	protected $tasks;
+    public function __construct(TaskRepository $tasks)
     public function __construct()
     {
         $this->middleware('auth');
+        $this->tasks = $tasks;
+	}
     
 	public function index(Request $request)
     {
-        return view('tasks.index');
+         $tasks = Task::where('user_id', $request->user()->id)->get();
+        return view('tasks.index', [
+           'tasks' => $tasks,
+        ]);
+
     }
     
     public function store(Request $request)
